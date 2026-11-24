@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>itz_n0t_jay</title>
+  <meta name="description" content="The little corner of the internet for itz_n0t_jay." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --violet: #8a4bff;
+      --blue: #3f6bff;
+      --ice: #9fd8ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { min-height: 100%; }
+
+    body {
+      margin: 0;
+      font-family: "Space Mono", monospace;
+      color: #fff;
+      background: #07061c url("bg-poster.jpg") center / cover no-repeat fixed;
+      overflow-x: hidden;
+    }
+
+    /* ---------- Neon liquid background video ---------- */
+    .bg-video {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: max(100vw, 177.78vh);
+      height: max(100vh, 56.25vw);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+      opacity: 0;
+      transition: opacity .7s ease;
+    }
+
+    .bg-video.ready { opacity: 1; }
+
+    .bg-video iframe {
+      width: 100% !important;
+      height: 100% !important;
+      border: 0;
+      pointer-events: none;
+    }
+
+    .vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+      background: radial-gradient(ellipse at center, transparent 35%, rgba(3, 2, 16, .78) 100%);
+    }
+
+    .snow {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 4;
+    }
+
+    /* Tiny fallback: only appears if the browser blocks autoplay */
+    .sound-fix {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 10;
+      width: 40px;
+      height: 40px;
+      display: none;
+      place-items: center;
+      border-radius: 50%;
+      border: 1px solid rgba(159, 216, 255, .7);
+      background: rgba(16, 8, 44, .85);
+      color: #eaf6ff;
+      font-size: 1rem;
+      cursor: pointer;
+      opacity: .75;
+      box-shadow: 0 0 22px rgba(120, 150, 255, .5);
+      animation: soundPulse 1.8s ease-in-out infinite;
+    }
+
+    .sound-fix.show { display: grid; }
+
+    @keyframes soundPulse {
+      50% { box-shadow: 0 0 34px rgba(150, 190, 255, .9); }
+    }
+
+    /* ---------- Profile ---------- */
+    main {
+      position: relative;
+      z-index: 2;
+      width: 100%;
+      max-width: 560px;
+      min-height: 100vh;
+      margin: 0 auto;
+      padding: 48px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      text-align: center;
+    }
+
+    .avatar {
+      width: 132px;
+      height: 132px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      font-family: "Orbitron", sans-serif;
+      font-size: 3.2rem;
+      font-weight: 900;
+      color: #fff;
+      background: linear-gradient(145deg, #5a2fff, #2f6fff 55%, #a63cff);
+      border: 2px solid rgba(190, 210, 255, .8);
+      box-shadow: 0 0 44px rgba(110, 90, 255, .75), inset 0 0 20px rgba(255, 255, 255, .18);
+    }
+
+    .avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    h1 {
+      font-family: "Orbitron", sans-serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 9vw, 3.4rem);
+      line-height: 1.1;
+      margin: 4px 0 0;
+      word-break: break-word;
+      background: linear-gradient(180deg, #ffffff 8%, #d8e4ff 48%, #9a6bff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      filter: drop-shadow(0 0 16px rgba(120, 90, 255, .8));
+    }
+
+    .now-playing {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 18px;
+      padding: 9px 18px 9px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(150, 180, 255, .3);
+      background: rgba(12, 8, 38, .55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+    }
+
+    .now-playing img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1px solid rgba(190, 210, 255, .5);
+    }
+
+    .track-info { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; }
+
+    .track-name {
+      font-family: "Orbitron", sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      color: #eef4ff;
+    }
+
+    .song-progress {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: min(500px, 100%);
+      height: 34px;
+      margin-top: 2px;
+      padding: 0 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(150, 180, 255, .28);
+      background: rgba(12, 8, 38, .55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      text-decoration: none;
+      color: #eaf2ff;
+      font-family: "Space Mono", monospace;
+      font-size: .62rem;
+      letter-spacing: .08em;
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .song-progress:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 20px rgba(120, 150, 255, .45);
+    }
+
+    .song-progress .time { flex: 0 0 auto; opacity: .82; }
+
+    .play-toggle {
+      flex: 0 0 auto;
+      width: 26px;
+      height: 26px;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      border: 1px solid rgba(159, 216, 255, .5);
+      border-radius: 50%;
+      background: rgba(120, 90, 255, .25);
+      color: #eaf6ff;
+      font-size: .72rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background .15s ease, box-shadow .15s ease;
+    }
+
+    .play-toggle:hover {
+      background: rgba(120, 90, 255, .45);
+      box-shadow: 0 0 12px rgba(120, 150, 255, .6);
+    }
+
+    .volume {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .volume-icon {
+      font-size: .7rem;
+      line-height: 1;
+      opacity: .8;
+    }
+
+    .volume-range {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 54px;
+      height: 14px;
+      margin: 0;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .volume-range::-webkit-slider-runnable-track {
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .22);
+    }
+
+    .volume-range::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 9px;
+      height: 9px;
+      margin-top: -3px;
+      border: 0;
+      border-radius: 50%;
+      background: #eaf6ff;
+      box-shadow: 0 0 8px rgba(120, 150, 255, .9);
+    }
+
+    .volume-range::-moz-range-track {
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .22);
+    }
+
+    .volume-range::-moz-range-thumb {
+      width: 9px;
+      height: 9px;
+      border: 0;
+      border-radius: 50%;
+      background: #eaf6ff;
+      box-shadow: 0 0 8px rgba(120, 150, 255, .9);
+    }
+
+    .progress-track {
+      position: relative;
+      flex: 1;
+      height: 16px;
+      display: flex;
+      align-items: center;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+      touch-action: none;
+      appearance: none;
+    }
+
+    .progress-track::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, .18);
+    }
+
+    .progress-fill {
+      position: relative;
+      display: block;
+      height: 3px;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #7b4cff, #00b7ff);
+      box-shadow: 0 0 10px rgba(120, 150, 255, .8);
+      pointer-events: none;
+    }
+
+    .progress-knob {
+      position: absolute;
+      top: 50%;
+      left: 0%;
+      width: 10px;
+      height: 10px;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: #eaf6ff;
+      box-shadow: 0 0 12px rgba(120, 150, 255, .9);
+      opacity: 0;
+      transition: opacity .15s ease;
+      pointer-events: none;
+    }
+
+    .progress-track:hover .progress-knob,
+    .progress-track:focus-visible .progress-knob { opacity: 1; }
+
+    .open-song {
+      flex: 0 0 auto;
+      color: inherit;
+      text-decoration: none;
+      font-size: .85rem;
+      opacity: .75;
+      padding: 0 2px;
+      transition: opacity .15s ease;
+    }
+
+    .open-song:hover { opacity: 1; }
+
+    .footer-link {
+      margin-top: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(150, 180, 255, .3);
+      background: rgba(12, 8, 38, .55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #eaf2ff;
+      font-size: .7rem;
+      letter-spacing: .12em;
+      text-decoration: none;
+      box-shadow: 0 0 18px rgba(120, 150, 255, .12);
+      transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+    }
+
+    .footer-link::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #8a4bff, #3f6bff);
+      box-shadow: 0 0 8px rgba(120, 150, 255, .9);
+    }
+
+    .footer-link:hover {
+      transform: translateY(-2px);
+      border-color: rgba(159, 216, 255, .7);
+      box-shadow: 0 0 24px rgba(120, 150, 255, .45);
+    }
+
+    /* Music plays quietly off-screen — no big player on the page. */
+    .player-wrap {
+      position: fixed;
+      left: -10000px;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    @media (max-width: 420px) {
+      .avatar { width: 112px; height: 112px; font-size: 2.6rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-video" aria-hidden="true"><div id="bgVideoPlayer"></div></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <canvas class="snow" id="snow" aria-hidden="true"></canvas>
+
+  <main id="main">
+    <div class="avatar" id="avatar" aria-hidden="true">J</div>
+    <h1 id="name">itz_n0t_jay</h1>
+    <div class="now-playing">
+      <img id="songCover" src="song-cover.jpg" alt="Song cover" />
+      <div class="track-info">
+        <span class="track-name" id="trackName">Baked Chicken</span>
+      </div>
+    </div>
+
+    <div class="song-progress" aria-label="Song progress">
+      <button class="play-toggle" id="playToggle" type="button" aria-label="Play music">▶</button>
+      <span class="time" id="elapsed">0:00</span>
+      <button class="progress-track" id="progressTrack" type="button" aria-label="Seek in song">
+        <span class="progress-fill" id="progressFill"></span>
+        <span class="progress-knob" id="progressKnob"></span>
+      </button>
+      <span class="time" id="totalTime">2:07</span>
+      <span class="volume">
+        <span class="volume-icon" id="volumeIcon" aria-hidden="true">🔊</span>
+        <input class="volume-range" id="volumeRange" type="range" min="0" max="100" value="80" aria-label="Volume" />
+      </span>
+      <a class="open-song" id="songLink" href="#" target="_blank" rel="noopener noreferrer" aria-label="Open the playing song on YouTube">↗</a>
+    </div>
+
+    <a class="footer-link" id="footerLink" href="#" target="_blank" rel="noopener noreferrer" aria-label="Join BidenWare on Discord">BidenWare ↗</a>
+  </main>
+
+  <div class="player-wrap" aria-hidden="true">
+    <div id="youtubePlayer"></div>
+  </div>
+
+  <button class="sound-fix" id="soundFix" type="button" aria-label="Enable music sound">♪</button>
+
+  <script>
+    // -------- EDIT HERE --------
+    const DISCORD_NAME = "itz_n0t_jay";
+    const PHOTO_URL = "pfp.webp";
+    const YOUTUBE_ID = "N_k6VT-DRQw";
+    const BACKGROUND_VIDEO_ID = "IBRSHRIlhEc";
+    const SONG_COVER = "song-cover.jpg";
+    const TRACK_NAME = "Baked Chicken";
+    const TRACK_LENGTH = "2:22";
+    const SONG_START_SECONDS = 15;
+    const START_VOLUME = 80; // 0-100
+    const DISCORD_INVITE = "https://discord.gg/yqdaatM8B";
+    const DISCORD_LABEL = "BidenWare";
+    // ---------------------------
+
+    const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const nameEl = document.getElementById("name");
+    const avatarEl = document.getElementById("avatar");
+    const soundFix = document.getElementById("soundFix");
+
+    nameEl.textContent = DISCORD_NAME;
+    document.title = DISCORD_NAME;
+    document.getElementById("songCover").src = SONG_COVER;
+    document.getElementById("trackName").textContent = TRACK_NAME;
+
+    const songLink = document.getElementById("songLink");
+    const elapsedEl = document.getElementById("elapsed");
+    const totalTimeEl = document.getElementById("totalTime");
+    const progressTrack = document.getElementById("progressTrack");
+    const progressFill = document.getElementById("progressFill");
+    const progressKnob = document.getElementById("progressKnob");
+    const playToggle = document.getElementById("playToggle");
+    const volumeRange = document.getElementById("volumeRange");
+    const volumeIcon = document.getElementById("volumeIcon");
+    const footerLink = document.getElementById("footerLink");
+    volumeRange.value = START_VOLUME;
+    footerLink.href = DISCORD_INVITE;
+    footerLink.textContent = `${DISCORD_LABEL} ↗`;
+    footerLink.setAttribute("aria-label", `Join ${DISCORD_LABEL} on Discord`);
+    songLink.href = `https://www.youtube.com/watch?v=${YOUTUBE_ID}&t=${SONG_START_SECONDS}s`;
+    songLink.setAttribute("aria-label", `Open ${TRACK_NAME} on YouTube`);
+    const fullLengthSeconds = (() => {
+      const parts = TRACK_LENGTH.split(":").map(Number);
+      return (parts[0] || 0) * 60 + (parts[1] || 0);
+    })();
+    totalTimeEl.textContent = formatTime(Math.max(0, fullLengthSeconds - SONG_START_SECONDS));
+
+    if (PHOTO_URL) {
+      const img = document.createElement("img");
+      img.src = PHOTO_URL;
+      img.alt = DISCORD_NAME;
+      img.onerror = () => { avatarEl.textContent = DISCORD_NAME.charAt(0).toUpperCase(); };
+      avatarEl.replaceChildren(img);
+    } else {
+      avatarEl.textContent = DISCORD_NAME.charAt(0).toUpperCase();
+    }
+
+    // ---------- Full song audio (hidden YouTube player) ----------
+    let ytPlayer = null;
+    let isPlaying = false;
+
+    function startPlayback() {
+      if (!ytPlayer || typeof ytPlayer.playVideo !== "function") return;
+      try { ytPlayer.playVideo(); } catch (error) { /* Wait for the player. */ }
+    }
+
+    function setPlayIcon(playing) {
+      playToggle.textContent = playing ? "⏸" : "▶";
+      playToggle.setAttribute("aria-label", playing ? "Pause music" : "Play music");
+    }
+
+    playToggle.addEventListener("click", () => {
+      if (!ytPlayer || typeof ytPlayer.getPlayerState !== "function") return;
+      const playing = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+      setPlayIcon(!playing);
+      if (playing) ytPlayer.pauseVideo();
+      else ytPlayer.playVideo();
+    });
+    ["pointerdown", "touchstart", "keydown"].forEach(type => {
+      playToggle.addEventListener(type, event => event.stopPropagation());
+    });
+
+    function paintVolume(value) {
+      volumeIcon.textContent = value === 0 ? "🔇" : "🔊";
+    }
+
+    function applyVolume(value, player = ytPlayer) {
+      const volume = Math.max(0, Math.min(100, Number(value) || 0));
+      paintVolume(volume);
+      if (player && typeof player.setVolume === "function") {
+        try { player.setVolume(volume); } catch (error) { /* Player not ready yet. */ }
+      }
+    }
+
+    volumeRange.addEventListener("input", () => applyVolume(volumeRange.value));
+    paintVolume(Number(volumeRange.value));
+
+    function formatTime(seconds) {
+      if (!Number.isFinite(seconds) || seconds < 0) return "0:00";
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins}:${String(secs).padStart(2, "0")}`;
+    }
+
+    function paintProgress(relative, span) {
+      const percent = Math.max(0, Math.min(100, (relative / Math.max(1, span)) * 100));
+      elapsedEl.textContent = formatTime(relative);
+      progressFill.style.width = `${percent}%`;
+      progressKnob.style.left = `${percent}%`;
+    }
+
+    function updateProgress() {
+      if (!ytPlayer || typeof ytPlayer.getCurrentTime !== "function") return;
+      try {
+        if (typeof ytPlayer.getPlayerState === "function") {
+          isPlaying = ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+          setPlayIcon(isPlaying);
+        }
+        const current = ytPlayer.getCurrentTime() || 0;
+        const duration = ytPlayer.getDuration() || fullLengthSeconds;
+        const relative = Math.max(0, current - SONG_START_SECONDS);
+        const span = Math.max(1, duration - SONG_START_SECONDS);
+        paintProgress(relative, span);
+      } catch (error) { /* Player not ready yet. */ }
+    }
+
+    function seekToRatio(ratio) {
+      if (!ytPlayer || typeof ytPlayer.seekTo !== "function") return;
+      const duration = ytPlayer.getDuration() || fullLengthSeconds;
+      const span = Math.max(1, duration - SONG_START_SECONDS);
+      const relative = Math.max(0, Math.min(1, ratio)) * span;
+      try { ytPlayer.seekTo(SONG_START_SECONDS + relative, true); } catch (error) { return; }
+      paintProgress(relative, span);
+    }
+
+    function seekFromEvent(event) {
+      const rect = progressTrack.getBoundingClientRect();
+      seekToRatio((event.clientX - rect.left) / rect.width);
+    }
+
+    let dragging = false;
+    progressTrack.addEventListener("pointerdown", event => {
+      dragging = true;
+      progressTrack.setPointerCapture(event.pointerId);
+      seekFromEvent(event);
+    });
+    progressTrack.addEventListener("pointermove", event => {
+      if (dragging) seekFromEvent(event);
+    });
+    progressTrack.addEventListener("pointerup", event => {
+      dragging = false;
+      try { progressTrack.releasePointerCapture(event.pointerId); } catch (error) { /* Already released. */ }
+    });
+    progressTrack.addEventListener("pointercancel", () => { dragging = false; });
+    progressTrack.addEventListener("keydown", event => {
+      if (!ytPlayer) return;
+      const duration = ytPlayer.getDuration() || fullLengthSeconds;
+      const span = Math.max(1, duration - SONG_START_SECONDS);
+      const current = Math.max(0, (ytPlayer.getCurrentTime() || 0) - SONG_START_SECONDS);
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        seekToRatio((current + 5) / span);
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        seekToRatio((current - 5) / span);
+      }
+    });
+
+    // Keep asking until the browser lets the song play on its own.
+    let playAttempts = 0;
+    const autoplayRetry = setInterval(() => {
+      const playing = ytPlayer && typeof ytPlayer.getPlayerState === "function"
+        && ytPlayer.getPlayerState() === YT.PlayerState.PLAYING;
+      if (playing || playAttempts++ > 30) {
+        clearInterval(autoplayRetry);
+        return;
+      }
+      startPlayback();
+    }, 400);
+
+    setInterval(updateProgress, 250);
+
+    window.onYouTubeIframeAPIReady = () => {
+      // Hidden full-length song.
+      ytPlayer = new YT.Player("youtubePlayer", {
+        width: 640,
+        height: 360,
+        videoId: YOUTUBE_ID,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          playsinline: 1,
+          rel: 0,
+          loop: 0,
+          start: SONG_START_SECONDS
+        },
+        events: {
+          onReady: event => {
+            const frame = event.target.getIframe();
+            if (frame) frame.setAttribute("allow", "autoplay; encrypted-media; picture-in-picture");
+            applyVolume(volumeRange.value, event.target);
+            startPlayback();
+            setTimeout(startPlayback, 800);
+          },
+          onStateChange: event => {
+            if (event.data === YT.PlayerState.PLAYING) {
+              isPlaying = true;
+              setPlayIcon(true);
+              soundFix.classList.remove("show");
+              updateProgress();
+            } else if (event.data === YT.PlayerState.PAUSED || event.data === YT.PlayerState.ENDED) {
+              isPlaying = false;
+              setPlayIcon(false);
+            }
+          }
+        }
+      });
+
+      // Full-screen neon liquid background (silent, so it can autoplay).
+      new YT.Player("bgVideoPlayer", {
+        videoId: BACKGROUND_VIDEO_ID,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+          disablekb: 1,
+          modestbranding: 1,
+          playsinline: 1,
+          rel: 0,
+          mute: 1,
+          iv_load_policy: 3,
+          fs: 0,
+          autohide: 1
+        },
+        events: {
+          onReady: event => {
+            event.target.mute();
+            event.target.playVideo();
+          },
+          onStateChange: event => {
+            if (event.data === YT.PlayerState.PLAYING) {
+              document.querySelector(".bg-video")?.classList.add("ready");
+            }
+          }
+        }
+      });
+    };
+
+    const ytScript = document.createElement("script");
+    ytScript.src = "https://www.youtube.com/iframe_api";
+    document.head.appendChild(ytScript);
+
+    // Browsers may block sound autoplay; the play button and ♪ fallback retry.
+    soundFix.addEventListener("click", () => {
+      startPlayback();
+      soundFix.classList.remove("show");
+    });
+    setTimeout(() => { if (!isPlaying) soundFix.classList.add("show"); }, 5000);
+
+    // ---------- Falling snow ----------
+    const snowCanvas = document.getElementById("snow");
+    const snowCtx = snowCanvas.getContext("2d");
+    let flakes = [];
+    let snowW = 0;
+    let snowH = 0;
+
+    function resizeSnow() {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      snowW = window.innerWidth;
+      snowH = window.innerHeight;
+      snowCanvas.width = snowW * dpr;
+      snowCanvas.height = snowH * dpr;
+      snowCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      const count = reducedMotion ? 90 : Math.min(420, Math.max(180, Math.round(snowW / 3)));
+      flakes = Array.from({ length: count }, () => ({
+        x: Math.random() * snowW,
+        y: Math.random() * snowH,
+        r: Math.random() * 2.8 + 0.8,
+        speed: (Math.random() * 2.4 + 1.2) * (reducedMotion ? 0.35 : 1),
+        drift: Math.random() * 0.5 + 0.1,
+        phase: Math.random() * Math.PI * 2,
+        alpha: Math.random() * 0.5 + 0.35
+      }));
+    }
+
+    function drawSnow() {
+      snowCtx.clearRect(0, 0, snowW, snowH);
+      for (const flake of flakes) {
+        flake.y += flake.speed;
+        flake.phase += 0.012;
+        flake.x += Math.sin(flake.phase) * flake.drift;
+        if (flake.y > snowH + 4) {
+          flake.y = -4;
+          flake.x = Math.random() * snowW;
+        }
+        if (flake.x < -4) flake.x = snowW + 4;
+        if (flake.x > snowW + 4) flake.x = -4;
+        snowCtx.beginPath();
+        snowCtx.arc(flake.x, flake.y, flake.r, 0, Math.PI * 2);
+        snowCtx.fillStyle = `rgba(235, 250, 255, ${flake.alpha})`;
+        snowCtx.fill();
+      }
+      requestAnimationFrame(drawSnow);
+    }
+
+    function handleResize() {
+      resizeSnow();
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    requestAnimationFrame(drawSnow);
+  </script>
+</body>
+</html>
